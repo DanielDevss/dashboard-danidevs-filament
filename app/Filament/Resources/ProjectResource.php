@@ -5,10 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
-use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,8 +24,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProjectResource extends Resource
 {
@@ -108,20 +104,28 @@ class ProjectResource extends Resource
                                 ->image()
                                 ->imageEditor()
                                 ->imageCropAspectRatio('4:3')
+                                ->imageResizeTargetWidth('560')
                                 ->disk("public")
                                 ->directory("projects/thumbs")
                                 ->visibility("public")
+                                ->openable()
                                 ->required(),
                             FileUpload::make("banner")
                                 ->label("Portada del proyecto")
                                 ->image()
                                 ->imageEditor()
-                                ->imageCropAspectRatio('16:9')
+                                ->imageEditorAspectRatios([
+                                    '31:9',
+                                    '21:9',
+                                    '16:9',
+                                    null,
+                                ])
+                                ->imageResizeTargetWidth('1280')
                                 ->disk("public")
                                 ->directory("projects/banner")
                                 ->visibility("public")
                                 ->previewable()
-                                ->downloadable()
+                                ->openable()
                         ]),
                     Step::make("Contenido")
                         ->icon("heroicon-o-newspaper")
@@ -140,13 +144,13 @@ class ProjectResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->orderBy('created_at', 'desc'))
             ->groups([
                 Group::make("categories.name")->label("Categorías")->collapsible(),
                 Group::make("technologies.name")->label("Tecnologías")->collapsible(),
                 Group::make("created_at")->label("Fecha de creación")->date()->collapsible(),
                 Group::make("updated_at")->label("Fecha de actualización")->date()->collapsible(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 ImageColumn::make("thumb")
                     ->circular()

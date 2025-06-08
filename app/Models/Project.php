@@ -16,7 +16,8 @@ class Project extends Model
         "banner",
         "content",
         "public",
-        "favorite"
+        "favorite",
+        "position"
     ];
 
 

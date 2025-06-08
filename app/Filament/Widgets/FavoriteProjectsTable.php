@@ -20,6 +20,7 @@ class FavoriteProjectsTable extends BaseWidget
             ->query(
                 Project::query()->where("favorite", "=", true)
             )
+            ->reorderable('position')
             ->striped()
             ->heading("Proyectos en favoritos")
             ->columns([

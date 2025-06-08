@@ -18,6 +18,7 @@ class FavoritePostsTable extends BaseWidget
             ->query(
                 Post::query()->where("favorite", "=", true)
             )
+            ->reorderable('position')
             ->striped()
             ->heading("Publicaciones en favoritos")
             ->columns([

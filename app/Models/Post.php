@@ -16,6 +16,7 @@ class Post extends Model
         'content',
         'public',
         'favorite',
+        'position',
         'thumb',
         'banner'
     ];
@@ -39,9 +40,9 @@ class Post extends Model
     {
         return $this->belongsToMany(
             CategoryPost::class,
-            'categories_posts', // nombre de tabla personalizado
-            'post_id',          // FK del modelo actual en la pivot
-            'category_post_id'  // FK del modelo relacionado (conservamos tu nombre)
+            'categories_posts',
+            'post_id',
+            'category_post_id'
         );
     }
 

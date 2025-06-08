@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
-use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Post;
-use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -18,22 +16,17 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
-
     protected static ?string $navigationGroup = 'Blog';
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
     protected static ?string $modelLabel = 'publicación';
@@ -133,7 +126,9 @@ class PostResource extends Resource
                                 ->directory("posts/thumbs")
                                 ->image()
                                 ->imageEditor()
+                                ->imageEditorAspectRatio('4:3')
                                 ->imageCropAspectRatio('4:3')
+                                ->imageResizeTargetWidth('560')
                                 ->maxSize(1024)
                                 ->placeholder("Selecciona una miniatura para la publicación")
                                 ->required(),
@@ -141,7 +136,9 @@ class PostResource extends Resource
                                 ->label("Banner de la publicación")
                                 ->image()
                                 ->imageEditor()
-                                ->imageCropAspectRatio('16:9')
+                                ->imageEditorAspectRatios(['31:9', '21:9', '16:9', null])
+                                ->imageResizeTargetWidth('1280')
+                                ->imageCropAspectRatio('31:9')
                                 ->disk("public")
                                 ->directory("posts/banner")
                                 ->maxSize(2048)
@@ -169,6 +166,7 @@ class PostResource extends Resource
         return $table
             ->striped()
             ->defaultSort("created_at", "desc")
+            ->reorderable('position')
             ->groups([
                 Group::make("categories.name")->label("Categorías")->collapsible(),
                 Group::make("technologies.name")->label("Tecnologías")->collapsible(),

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('content');
             $table->boolean('public')->default(false);
             $table->boolean('favorite')->default(false);
+            $table->integer('position')->nullable();
             $table->string('thumb', 155);
             $table->string('banner')->nullable();
             $table->timestamps();
