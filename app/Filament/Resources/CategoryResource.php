@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
+use App\Filament\Resources\CategoryResource\RelationManagers\ProjectsRelationManager;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,10 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Proyectos';
-
     protected static ?string $pluralLabel = "categorias";
     protected static ?string $modelLabel = "categoria";
 
@@ -36,16 +36,22 @@ class CategoryResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
-                TextColumn::make('name')->label('Categoria'),
-                TextColumn::make('created_at')->dateTime('d/F/Y, h:m a')->label('Creado el'),
-                TextColumn::make('updated_at')->dateTime('d/F/Y, h:m a')->label('Actualizado el'),
+                TextColumn::make('name')->label('Categoria')->searchable()->weight("bold"),
+                TextColumn::make('projects_count')->label('Proyectos')->sortable()->counts('projects')->alignEnd()->toggleable(),
+                TextColumn::make('created_at')->dateTime('d/F/Y, h:m a')->label('Creado el')->sortable()->toggleable(),
+                TextColumn::make('updated_at')->dateTime('d/F/Y, h:m a')->label('Actualizado el')->sortable()->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -57,7 +63,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProjectsRelationManager::class,
         ];
     }
 

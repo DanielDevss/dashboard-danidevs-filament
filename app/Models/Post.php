@@ -44,4 +44,12 @@ class Post extends Model
             'category_post_id'  // FK del modelo relacionado (conservamos tu nombre)
         );
     }
+
+    public function technologies() {
+        return $this->belongsToMany(
+            Technology::class,
+            'technologies_posts',
+            'post_id'
+        );
+    }
 }

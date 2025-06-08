@@ -28,7 +28,6 @@ class CategoryPost extends Model
         });
     }
 
-
     public function posts()
     {
         return $this->belongsToMany(

@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryPostResource\Pages;
 use App\Filament\Resources\CategoryPostResource\RelationManagers;
+use App\Filament\Resources\CategoryPostResource\RelationManagers\PostsRelationManager;
 use App\Models\CategoryPost;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -44,20 +46,44 @@ class CategoryPostResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
-                TextColumn::make('name')->label('Categoría'),
+                TextColumn::make('name')
+                    ->label('Categoría')
+                    ->searchable()
+                    ->wrap()
+                    ->description(fn($record) => $record?->description
+                        ? $record->description 
+                        : "Sin descripción"
+                    )
+                    ->weight("bold"),
+                TextColumn::make('posts_count')
+                    ->label('Públicaciones')
+                    ->searchable()
+                    ->counts('posts')
+                    ->sortable()
+                    ->alignEnd()
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Creado el')
-                    ->dateTime('d/F/Y, h:m a'),
+                    ->dateTime('d/F/Y, h:m a')
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('updated_at')
-                    ->label('Creado el')
-                    ->dateTime('d/F/Y, h:m a'),
+                    ->label('Actualizado el')
+                    ->dateTime('d/F/Y, h:m a')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -69,7 +95,7 @@ class CategoryPostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PostsRelationManager::class,
         ];
     }
 
