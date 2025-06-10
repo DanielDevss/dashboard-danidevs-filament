@@ -241,7 +241,7 @@ class PostResource extends Resource
                     ->searchable(),
                 TernaryFilter::make('favorite')->label("Mostrar favoritos")->placeholder("Mostrar favoritos y no favoritos"),
                 TernaryFilter::make('public')->label("Visibilidad")->trueLabel("Público")->falseLabel("Borrador")->placeholder("Mostrar ambos")
-            ])
+            ], layout: Tables\Enums\FiltersLayout::Modal)
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),

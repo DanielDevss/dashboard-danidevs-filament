@@ -38,6 +38,7 @@ class ProjectResource extends Resource
             ->schema([
                 Wizard::make([
                     Step::make("Información")
+                        ->description('Detalles básicos del proyecto')
                         ->columns(2)
                         ->icon("heroicon-o-queue-list")
                         ->schema([
@@ -95,39 +96,60 @@ class ProjectResource extends Resource
                                         ->offIcon("heroicon-o-star"),
                                 ]),
                         ]),
-                    Step::make("Media")
+                    Step::make("Media & Enlaces")
+                        ->description('Imagenes, link del sitio, repositorio')
                         ->columns(2)
                         ->icon("heroicon-o-photo")
                         ->schema([
-                            FileUpload::make("thumb")
-                                ->label("Miniatura")
-                                ->image()
-                                ->imageEditor()
-                                ->imageCropAspectRatio('4:3')
-                                ->imageResizeTargetWidth('560')
-                                ->disk("public")
-                                ->directory("projects/thumbs")
-                                ->visibility("public")
-                                ->openable()
-                                ->required(),
-                            FileUpload::make("banner")
-                                ->label("Portada del proyecto")
-                                ->image()
-                                ->imageEditor()
-                                ->imageEditorAspectRatios([
-                                    '31:9',
-                                    '21:9',
-                                    '16:9',
-                                    null,
+                            Fieldset::make('Imagenes')
+                                ->schema([
+                                    FileUpload::make("thumb")
+                                        ->label("Miniatura")
+                                        ->image()
+                                        ->imageEditor()
+                                        ->imageCropAspectRatio('4:3')
+                                        ->imageResizeTargetWidth('560')
+                                        ->disk("public")
+                                        ->directory("projects/thumbs")
+                                        ->visibility("public")
+                                        ->openable()
+                                        ->required(),
+                                    FileUpload::make("banner")
+                                        ->label("Portada del proyecto")
+                                        ->image()
+                                        ->imageEditor()
+                                        ->imageCropAspectRatio('31:9')
+                                        ->imageEditorAspectRatios([
+                                            '31:9',
+                                            '21:9',
+                                            '16:9',
+                                            null,
+                                        ])
+                                        ->imageResizeTargetWidth('1280')
+                                        ->disk("public")
+                                        ->directory("projects/banner")
+                                        ->visibility("public")
+                                        ->previewable()
+                                        ->openable(),
+                                        ]),
+                            Fieldset::make('Enlaces')
+                                ->schema([
+                                    TextInput::make('link')
+                                        ->label('Enlace del sitio')
+                                        ->url()
+                                        ->placeholder('Agrega el URL del sitio web')
+                                        ->columnSpanFull()
+                                        ->prefixIcon('heroicon-o-link'),
+                                    TextInput::make('repository')
+                                        ->label('Repositorio')
+                                        ->url()
+                                        ->placeholder('Agrega el URL del repositorio del proyecto')
+                                        ->columnSpanFull()
+                                        ->prefixIcon('heroicon-o-share')
                                 ])
-                                ->imageResizeTargetWidth('1280')
-                                ->disk("public")
-                                ->directory("projects/banner")
-                                ->visibility("public")
-                                ->previewable()
-                                ->openable()
                         ]),
                     Step::make("Contenido")
+                        ->description('Detalles y descripción')
                         ->icon("heroicon-o-newspaper")
                         ->schema([
                             RichEditor::make("content")
@@ -230,7 +252,7 @@ class ProjectResource extends Resource
                     ->trueLabel("Mostrar públicos")
                     ->falseLabel("Mostrar ocultos")
 
-            ])
+            ], layout: Tables\Enums\FiltersLayout::Modal)
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),

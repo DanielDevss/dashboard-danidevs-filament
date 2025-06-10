@@ -23,6 +23,8 @@ return new class extends Migration
             $table->boolean('public')->default(false);
             $table->boolean('favorite')->default(false);
             $table->integer('position')->nullable();
+            $table->string('link', 355)->nullable();
+            $table->string('repository', 355)->nullable();
             $table->timestamps();
         });
     }
